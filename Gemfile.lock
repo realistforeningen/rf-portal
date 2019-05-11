@@ -1,0 +1,41 @@
+GIT
+  remote: git://github.com/judofyr/appy.git
+  revision: 46a4535b87b21c181e6b1b9849316c95cf8953fe
+  specs:
+    appy (1.master)
+
+GIT
+  remote: git://github.com/judofyr/ippon.git
+  revision: 4d18ba20c9f2cc21cdbff73a45b98b849c56e2d2
+  specs:
+    ippon (1.master)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    coderay (1.1.2)
+    method_source (0.9.2)
+    pg (1.1.4)
+    pry (0.12.2)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
+    rack (2.0.7)
+    roda (3.19.0)
+      rack
+    sequel (5.20.0)
+    tubby (1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  appy!
+  ippon!
+  pg
+  pry
+  roda (~> 3.19.0)
+  sequel (~> 5.20.0)
+  tubby (~> 1.0)
+
+BUNDLED WITH
+   1.17.2
