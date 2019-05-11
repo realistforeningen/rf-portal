@@ -42,6 +42,20 @@ RFP = Appy.new do
   cmd(:migrate) do
     migrator.apply
   end
+
+  has(:web_app) do
+    require_relative 'app/web'
+    Web.freeze.app
+  end
+
+  has(:webpack_assets_path) do
+    root + 'dist'
+  end
+
+  has(:webpack_manifest) do
+    require 'json'
+    JSON.parse((webpack_assets_path + 'manifest.json').read)
+  end
 end
 
 RFP.cli! if __FILE__ == $0

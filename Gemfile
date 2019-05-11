@@ -12,6 +12,9 @@ gem 'ippon', github: 'judofyr/ippon'
 gem 'tubby' , '~> 1.0'
 gem 'roda', '~> 3.19.0'
 
+# Web server
+gem 'puma'
+
 # Dev tools
 gem 'pry'
 
