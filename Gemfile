@@ -18,6 +18,9 @@ gem 'roda', '~> 3.19.0'
 # Web server
 gem 'puma'
 
+# Password hashing
+gem 'argon2'
+
 # Dev tools
 gem 'pry'
 
