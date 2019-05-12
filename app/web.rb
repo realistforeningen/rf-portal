@@ -75,6 +75,7 @@ class Web < Roda
 
     if user_id = r.session["user_id"]
       @current_user = Models::User[user_id]
+      @layout.header_contents << Views::Navigation.new(@current_user)
     end
 
     r.root do
