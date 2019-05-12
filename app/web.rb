@@ -85,5 +85,32 @@ class Web < Roda
 
       render("Hello #{@current_user.name}!")
     end
+
+    r.on "users" do
+      r.is method: :get do
+        render(Pages::Users.new)
+      end
+
+      r.on Integer, "edit" do |id|
+        user = Models::User[id]
+        page = Pages::UserEdit.new(user)
+
+        r.is method: "get" do
+          page.form.from_model(user)
+          render(page)
+        end
+
+        r.is method: "post" do
+          page.form.from_params(form_data)
+          result = page.form.validate
+          if result.valid?
+            user.update(result.value)
+            r.redirect("/users")
+          else
+            render(page)
+          end
+        end
+      end
+    end
   end
 end

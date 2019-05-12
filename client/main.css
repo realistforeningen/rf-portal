@@ -41,3 +41,31 @@
 .control-button {
   @apply py-1 px-4 bg-gray-200 border border-indigo-500 font-semibold rounded;
 }
+
+.tbl {
+  @apply w-full;
+}
+
+.tbl th {
+  @apply p-3 border-b-2 border-gray-200 text-left;
+}
+
+.tbl td {
+  @apply border-b border-gray-200 p-2;
+}
+
+.page {
+  max-width: 800px;
+}
+
+.page h2 {
+  @apply text-3xl font-bold border-b-4 border-indigo-500 mb-4 leading-tight;
+}
+
+.link {
+  @apply underline text-indigo-700;
+}
+
+.link:hover {
+  @apply no-underline;
+}

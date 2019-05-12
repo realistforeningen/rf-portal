@@ -33,7 +33,7 @@ module Views
             @header_contents.each { |c| t << c }
           }
 
-          t.div(class: "py-2 px-4") {
+          t.div(class: "p-4") {
             t << @content
           }
         }
