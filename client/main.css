@@ -3,3 +3,41 @@
 @tailwind components;
 
 @tailwind utilities;
+
+.measure {
+  max-width: 30em;
+}
+
+/* Measure is limited to ~80 characters */
+.measure-wide {
+  max-width: 34em;
+}
+
+/* Measure is limited to ~45 characters */
+.measure-narrow {
+  max-width: 20em;
+}
+
+.control-input {
+  @apply shadow border rounded w-full py-2 px-3 text-gray-800 leading-tight;
+}
+
+.control-input:focus {
+  @apply outline-none shadow-outline;
+}
+
+.control-input.error {
+  @apply border-red-500;
+}
+
+.control-section {
+  @apply block mb-4;
+}
+
+.control-label {
+  @apply text-gray-800 text-sm font-bold mb-1;
+}
+
+.control-button {
+  @apply py-1 px-4 bg-gray-200 border border-indigo-500 font-semibold rounded;
+}

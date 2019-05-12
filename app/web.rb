@@ -1,8 +1,10 @@
 require 'roda'
 require 'tubby'
+require 'ippon/form_data'
 
 class Web < Roda
   DIST_APP = ::Rack::File.new(RFP.webpack_assets_path.to_s)
+  ROOT_KEY = Ippon::FormData::DotKey.new
 
   def webpack_path(name)
     full_name = RFP.webpack_manifest.fetch(name)
@@ -17,6 +19,22 @@ class Web < Roda
     target
   end
 
+  def body_data
+    @body_data ||= if request.content_type == "application/x-www-form-urlencoded"
+      Ippon::FormData::URLEncoded.parse(request.body.read)
+    else
+      Ippon::FormData::URLEncoded.new
+    end
+  end
+
+  def get_data
+    @get_data ||= Ippon::FormData::URLEncoded.parse(request.query_string)
+  end
+
+  def form_data
+    request.get? ? get_data : body_data
+  end
+
   route do |r|
     r.on "dist" do
       r.run DIST_APP
@@ -26,6 +44,26 @@ class Web < Roda
     @layout.head_contents << Tubby.new { |t|
       t.link(rel: "stylesheet", href: webpack_path("main.css"))
     }
+
+    r.on "login" do
+      form = Forms::Login.new
+      form.key = ROOT_KEY
+      page = Pages::Login.new(form)
+
+      r.is method: :get do
+        render(page)
+      end
+
+      r.is method: :post do
+        form.from_params(form_data)
+        result = form.validate
+        if result.valid?
+          "TODO"
+        else
+          render(page)
+        end
+      end
+    end
 
     r.root do
       render("Hello world!")

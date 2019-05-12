@@ -6,6 +6,13 @@ GIT
       cri (~> 2.15.0)
 
 GIT
+  remote: git://github.com/judofyr/fibby.git
+  revision: 84af7ac9863fc9152bb43b8e05abf1d08f766d13
+  specs:
+    fibby (1.master)
+      ippon
+
+GIT
   remote: git://github.com/judofyr/ippon.git
   revision: 4d18ba20c9f2cc21cdbff73a45b98b849c56e2d2
   specs:
@@ -43,6 +50,7 @@ PLATFORMS
 DEPENDENCIES
   appy!
   argon2
+  fibby!
   ippon!
   pg
   pry
