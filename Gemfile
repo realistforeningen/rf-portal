@@ -16,6 +16,9 @@ gem 'tubby' , '~> 1.0'
 gem 'roda', '~> 3.19.0'
 gem 'fibby', github: 'judofyr/fibby'
 
+# Error reporting
+gem 'sentry-raven'
+
 # Web server
 gem 'puma'
 

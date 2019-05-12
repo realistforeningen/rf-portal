@@ -1,6 +1,7 @@
 require 'roda'
 require 'tubby'
 require 'ippon/form_data'
+require 'raven'
 
 class Web < Roda
   DIST_APP = ::Rack::File.new(RFP.webpack_assets_path.to_s)
@@ -36,6 +37,23 @@ class Web < Roda
   def form_data
     request.get? ? get_data : body_data
   end
+
+  if sentry_dsn = RFP.has?(:sentry_dsn)
+    Raven.configure do |config|
+      config.dsn = RFP.get(:sentry_dsn)
+    end
+  end
+
+  plugin :error_handler do |err|
+    if RFP.has?(:sentry_dsn)
+      Raven.capture_exception(err)
+      render(Pages::Error.new)
+    else
+      raise err
+    end
+  end
+
+  plugin :default_headers, "Content-Type" => "text/html;charset=utf-8"
 
   route do |r|
     r.on "dist" do

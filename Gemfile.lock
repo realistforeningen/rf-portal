@@ -26,11 +26,14 @@ GEM
       ffi-compiler (>= 0.1)
     coderay (1.1.2)
     cri (2.15.5)
+    faraday (0.15.4)
+      multipart-post (>= 1.2, < 3)
     ffi (1.10.0)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
     method_source (0.9.2)
+    multipart-post (2.1.0)
     pg (1.1.4)
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -40,6 +43,8 @@ GEM
     rake (12.3.2)
     roda (3.19.0)
       rack
+    sentry-raven (2.9.0)
+      faraday (>= 0.7.6, < 1.0)
     sequel (5.20.0)
     tubby (1.0)
     zeitwerk (2.1.6)
@@ -56,6 +61,7 @@ DEPENDENCIES
   pry
   puma
   roda (~> 3.19.0)
+  sentry-raven
   sequel (~> 5.20.0)
   tubby (~> 1.0)
   zeitwerk
