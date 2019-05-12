@@ -91,6 +91,26 @@ class Web < Roda
         render(Pages::Users.new)
       end
 
+      r.is "new" do
+        page = Pages::UserNew.new
+
+        r.is method: "get" do
+          render(page)
+        end
+
+        r.is method: :post do
+          page.form.from_params(form_data)
+          result = page.form.validate
+
+          if result.valid?
+            Models::User.create(result.value)
+            r.redirect("/users")
+          end
+
+          render(page)
+        end
+      end
+
       r.on Integer, "edit" do |id|
         user = Models::User[id]
         page = Pages::UserEdit.new(user)
