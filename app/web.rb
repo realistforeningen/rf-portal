@@ -145,8 +145,13 @@ class Web < Roda
           result = page.form.validate
 
           if result.valid?
-            Models::User.create(result.value)
-            r.redirect("/users")
+            begin
+              Models::User.create(result.value)
+            rescue Sequel::UniqueConstraintViolation => err
+              page.form.email_unique
+            else
+              r.redirect("/users")
+            end
           end
 
           render(page)
@@ -165,12 +170,18 @@ class Web < Roda
         r.is method: "post" do
           page.form.from_params(form_data)
           result = page.form.validate
+          
           if result.valid?
-            user.update(result.value)
-            r.redirect("/users")
-          else
-            render(page)
+            begin
+              user.update(result.value)
+            rescue Sequel::UniqueConstraintViolation => err
+              page.form.email_unique
+            else
+              r.redirect("/users")
+            end
           end
+
+          render(page)
         end
       end
     end

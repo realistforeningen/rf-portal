@@ -16,6 +16,12 @@ module Forms
       end
     end
 
+    UNIQUE_EMAIL = V.validate(message: "Email is already used") { false }
+
+    def email_unique
+      self[:email].result.errors << Ippon::Validate::StepError.new(UNIQUE_EMAIL)
+    end
+
     def from_model(user)
       from_hash(
         name: user.name,
