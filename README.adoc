@@ -1,0 +1,72 @@
+:toc:
+
+= RF-portal
+
+== Installing dependencies
+
+System dependencies:
+
+- Ruby 2.5 (or later)
+- Node.js (any recent version)
+- PostgreSQL (any recent version)
+
+Project dependencies:
+
+----
+# Ruby dependencies
+$ bundle
+
+# Node.js dependencies
+$ yarn
+----
+
+You might need to re-run these commands as dependencies change.
+
+## Initial setup
+
+PostgreSQL database:
+
+----
+$ createdb rfp
+----
+
+Create a config.rb:
+
+[source,ruby]
+----
+# config.rb
+
+# This must match up with your PostgreSQL credentials:
+set :database_url, 'postgres:///rfp'
+
+# This must just be a random string:
+set :secret, "1f28c64dec80e03e354f3a742d69884bc390118ea449c0084a278c4566779ed5"
+----
+
+Migrate the database to the latest version:
+
+----
+$ ruby app.rb migrate
+----
+
+Create a user:
+
+----
+$ ruby app.rb add-user
+----
+
+## Running the application
+
+Run Webpack in watch-mode:
+
+----
+$ yarn watch
+----
+
+Run the web server:
+
+----
+$ bundle exec rackup
+----
+
+Now it should be running on <http://localhost:9292/>.
