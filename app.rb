@@ -77,6 +77,28 @@ RFP = Appy.new do
       migrate
     end
   end
+
+  cmd do |c|
+    c.name "add-user"
+    c.summary "create new user"
+
+    c.option nil, :email, "Email address", argument: :required
+    c.option :n, :name, "Name", argument: :required
+    c.option :p, :password, "Password", argument: :required
+
+    c.run do |opts, args|
+      require 'io/console'
+      email = opts[:email] || (print("Enter email: "); $stdin.gets.strip)
+      name = opts[:name] || (print("Enter name: "); $stdin.gets.strip)
+      password = opts[:password] || IO.console.getpass("Enter password: ")
+      user = Models::User.create(
+        email: email,
+        name: name,
+        password: password
+      )
+      puts "Successfully created user (id=#{user.id})"
+    end
+  end
 end
 
 RFP.loader.setup
