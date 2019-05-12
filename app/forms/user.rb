@@ -22,17 +22,8 @@ module Forms
       email = self[:email]
 
       Tubby.new { |t|
-        t.label(class: "control-section") {
-          t.label {
-            t.div("Name", class: "control-label")
-            t.input(type: "name", name: name.key, value: name.value, class: "control-input")
-          }
-        }
-
-        t.label(class: "control-section") {
-          t.div("Email", class: "control-label")
-          t.input(type: "email", name: email.key, value: email.value, class: "control-input")
-        }
+        t << Input.new(field: name, name: "Name")
+        t << Input.new(field: email, name: "Email", type: "email")
       }
     end
   end

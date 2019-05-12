@@ -34,17 +34,8 @@ module Forms
           }
         end
 
-        t.label(class: "control-section") {
-          t.div("Email", class: "control-label")
-          t.input(type: "email", name: email.key, value: email.value, class: "control-input")
-        }
-
-        t.label(class: "control-section") {
-          t.label {
-            t.div("Password", class: "control-label")
-            t.input(type: "password", name: password.key, class: "control-input")
-          }
-        }
+        t << Input.new(field: email, name: "Email", type: "email")
+        t << Input.new(field: password, name: "Password", type: "password")
       }
     end
   end
