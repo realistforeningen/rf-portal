@@ -17,7 +17,8 @@ class Web < Roda
   def render(content = nil)
     @layout.content = content if content
     target = String.new
-    t = Tubby::Renderer.new(target)
+    t = RodaRenderer.new(target)
+    t.roda_instance = self
     t << @layout
     target
   end
@@ -55,7 +56,30 @@ class Web < Roda
 
   plugin :default_headers, "Content-Type" => "text/html;charset=utf-8"
 
+  plugin :route_csrf
+
+  class RodaRenderer < Tubby::Renderer
+    attr_accessor :roda_instance
+
+    def current_path
+      roda_instance.request.path
+    end
+
+    def csrf_form(*args, action: current_path, method:, **opts)
+      form(*args, action: action, method: method, **opts) {
+        input(
+          type: "hidden",
+          name: roda_instance.csrf_field,
+          value: roda_instance.csrf_token(action, method),
+        )
+        yield if block_given?
+      }
+    end
+  end
+
   route do |r|
+    check_csrf!
+
     r.on "dist" do
       r.run DIST_APP
     end

@@ -6,7 +6,7 @@ module Pages
 
     def to_tubby
       Tubby.new { |t|
-        t.form(class: "measure", method: "post") {
+        t.csrf_form(class: "measure", method: "post") {
           t << @form
 
           t.button("Sign in", class: "control-button")

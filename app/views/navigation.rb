@@ -36,7 +36,7 @@ module Views
     Button = Struct.new(:name, :url) do
       def to_tubby
         Tubby.new { |t|
-          t.form(method: :post, action: url) {
+          t.csrf_form(method: :post, action: url) {
             t.button(name, class: "underline hover:no-underline")
           }
         }

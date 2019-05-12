@@ -13,7 +13,7 @@ module Pages
         t.div(class: "page") {
           t.h2("New user")
 
-          t.form(method: "post", class: "measure") {
+          t.csrf_form(method: "post", class: "measure") {
             t << @form
 
             t.button("Create", class: "control-button")
