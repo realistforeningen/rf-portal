@@ -29,11 +29,6 @@ RFP = Appy.new do
     loader
   end
 
-  cmd(:console) do
-    require 'pry'
-    binding.pry
-  end
-
   has(:db) do
     require 'sequel'
     Sequel.connect(get(:database_url))
@@ -46,7 +41,7 @@ RFP = Appy.new do
     m
   end
 
-  cmd(:migrate) do
+  def migrate
     migrator.apply
   end
 
@@ -62,6 +57,25 @@ RFP = Appy.new do
   has(:webpack_manifest) do
     require 'json'
     JSON.parse((webpack_assets_path + 'manifest.json').read)
+  end
+
+  cmd do |c|
+    c.name "console"
+    c.summary "runs console in application context"
+
+    c.run do |opts, args|
+      require 'pry'
+      binding.pry
+    end
+  end
+
+  cmd do |c|
+    c.name "migrate"
+    c.summary "run migrations"
+
+    c.run do |opts, args|
+      migrate
+    end
   end
 end
 

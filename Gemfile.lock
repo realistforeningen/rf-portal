@@ -1,8 +1,9 @@
 GIT
   remote: git://github.com/judofyr/appy.git
-  revision: 46a4535b87b21c181e6b1b9849316c95cf8953fe
+  revision: 1d32d2cfc79cfa31aba7d0f29dbcde0ab086e2a5
   specs:
     appy (1.master)
+      cri (~> 2.15.0)
 
 GIT
   remote: git://github.com/judofyr/ippon.git
@@ -17,6 +18,7 @@ GEM
       ffi (~> 1.9)
       ffi-compiler (>= 0.1)
     coderay (1.1.2)
+    cri (2.15.5)
     ffi (1.10.0)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
