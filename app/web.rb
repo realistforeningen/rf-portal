@@ -9,17 +9,26 @@ class Web < Roda
     "/dist/#{full_name}"
   end
 
+  def render(content = nil)
+    @layout.content = content if content
+    target = String.new
+    t = Tubby::Renderer.new(target)
+    t << @layout
+    target
+  end
+
   route do |r|
     r.on "dist" do
       r.run DIST_APP
     end
 
+    @layout = Views::Layout.new
+    @layout.head_contents << Tubby.new { |t|
+      t.link(rel: "stylesheet", href: webpack_path("main.css"))
+    }
+
     r.root do
-      Tubby.new { |t|
-        t.doctype!
-        t.link(rel: "stylesheet", href: webpack_path("main.css"))
-        t.p("Webapp is running!", class: "text-green-700 text-xl")
-      }.to_s
+      render("Hello world!")
     end
   end
 end

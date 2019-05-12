@@ -25,6 +25,7 @@ GEM
       rack
     sequel (5.20.0)
     tubby (1.0)
+    zeitwerk (2.1.6)
 
 PLATFORMS
   ruby
@@ -38,6 +39,10 @@ DEPENDENCIES
   roda (~> 3.19.0)
   sequel (~> 5.20.0)
   tubby (~> 1.0)
+  zeitwerk
+
+RUBY VERSION
+   ruby 2.5.3p105
 
 BUNDLED WITH
    1.17.2

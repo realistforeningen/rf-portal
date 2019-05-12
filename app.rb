@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'appy'
+require 'zeitwerk'
 
 RFP = Appy.new do
   @config = {}
@@ -20,6 +21,12 @@ RFP = Appy.new do
 
   if config_file.exist?
     instance_eval(config_file.read, config_file.to_s)
+  end
+
+  has(:loader) do
+    loader = Zeitwerk::Loader.new
+    loader.push_dir(root + 'app')
+    loader
   end
 
   cmd(:console) do
@@ -57,6 +64,8 @@ RFP = Appy.new do
     JSON.parse((webpack_assets_path + 'manifest.json').read)
   end
 end
+
+RFP.loader.setup
 
 RFP.cli! if __FILE__ == $0
 
