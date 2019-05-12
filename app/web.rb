@@ -6,6 +6,8 @@ class Web < Roda
   DIST_APP = ::Rack::File.new(RFP.webpack_assets_path.to_s)
   ROOT_KEY = Ippon::FormData::DotKey.new
 
+  plugin :sessions, secret: RFP.get(:secret)
+
   def webpack_path(name)
     full_name = RFP.webpack_manifest.fetch(name)
     "/dist/#{full_name}"
@@ -58,15 +60,29 @@ class Web < Roda
         form.from_params(form_data)
         result = form.validate
         if result.valid?
-          "TODO"
+          r.session["user_id"] = result.value[:user].id
+          r.redirect("/")
         else
           render(page)
         end
       end
     end
 
+    r.is "logout", method: :post do
+      r.session.delete("user_id")
+      r.redirect("/")
+    end
+
+    if user_id = r.session["user_id"]
+      @current_user = Models::User[user_id]
+    end
+
     r.root do
-      render("Hello world!")
+      if !@current_user
+        r.redirect("/login")
+      end
+
+      render("Hello #{@current_user.name}!")
     end
   end
 end
