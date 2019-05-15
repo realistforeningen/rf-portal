@@ -81,7 +81,16 @@ class Web < Roda
     check_csrf!
 
     r.on "dist" do
-      r.run DIST_APP
+      response = catch(:halt) do
+        r.run DIST_APP
+      end
+
+      if request.path.include?(".cache.")
+        max_age = 60*60*24*365
+        response[1]["Cache-Control"] = "max-age=#{max_age}, public, immutable"
+      end
+
+      r.halt(response)
     end
 
     @layout = Views::Layout.new

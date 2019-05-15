@@ -4,7 +4,7 @@ const ManifestPlugin = require("webpack-manifest-plugin");
 
 module.exports = (env, argv) => {
   let isProd = argv.mode === "production";
-  let extra = isProd ? "-[hash]" : "";
+  let extra = isProd ? ".cache.[chunkhash]" : "";
   process.env.NODE_ENV = argv.mode;
 
   return {
