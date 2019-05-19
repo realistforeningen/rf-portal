@@ -59,6 +59,18 @@ RFP = Appy.new do
     JSON.parse((webpack_assets_path + 'manifest.json').read)
   end
 
+  has(:eaccounting_sandbox) do
+    require 'eaccounting_client'
+
+    EaccountingClient.new(
+      site: "https://eaccountingapi-sandbox.test.vismaonline.com",
+      authorize_url: "https://identity-sandbox.test.vismaonline.com/connect/authorize",
+      token_url: "https://identity-sandbox.test.vismaonline.com/connect/token",
+      redirect_uri: "https://localhost:44300/callback",
+      **get(:eaccounting_sandbox),
+    )
+  end
+
   cmd do |c|
     c.name "console"
     c.summary "runs console in application context"

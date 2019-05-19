@@ -31,3 +31,18 @@ migrate "2-users" do |db|
 
   add_updated_at_trigger.(db, :users)
 end
+
+migrate "3-eaccounting" do |db|
+  db.create_table(:eaccounting_integrations) do
+    primary_key :id
+
+    Text :name, null: false
+    Text :environment, null: false
+
+    Text :access_token
+    Text :refresh_token
+    Time :token_expires_at
+
+    Time :created_at, default: Sequel.function(:now)
+  end
+end

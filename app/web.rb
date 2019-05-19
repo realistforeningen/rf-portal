@@ -222,5 +222,32 @@ class Web < Roda
         end
       end
     end
+
+    r.is "callback", method: :get do
+      token = RFP.eaccounting_sandbox.get_token(form_data["code"])
+      settings = token.get("/v2/companysettings").parsed
+      company_number = settings["CorporateIdentityNumber"]
+      env = form_data["state"]
+      integration = Models::EaccountingIntegration.find_or_create(
+        environment: env,
+        name: company_number
+      )
+      integration.update(
+        access_token: token.token,
+        refresh_token: token.refresh_token,
+        token_expires_at: Time.at(token.expires_at),
+      )
+      r.redirect("/eaccounting")
+    end
+
+    r.on "eaccounting" do
+      r.is method: :get do
+        render(Pages::Eaccounting.new)
+      end
+
+      r.is "sandbox", method: :get do
+        r.redirect(RFP.eaccounting_sandbox.authorize_url(state: "sandbox"))
+      end
+    end
   end
 end

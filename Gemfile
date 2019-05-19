@@ -16,6 +16,9 @@ gem 'tubby' , '~> 1.0'
 gem 'roda', '~> 3.19.0'
 gem 'fibby', github: 'judofyr/fibby'
 
+# Integration with eAccounting
+gem 'oauth2', '~> 1.4.1'
+
 # Error reporting
 gem 'sentry-raven'
 
