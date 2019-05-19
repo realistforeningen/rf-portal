@@ -137,6 +137,34 @@ class Web < Roda
       render("Hello #{@current_user.name}!")
     end
 
+    r.on "me" do
+      page = Pages::Me.new
+      
+      r.is method: :get do
+        page.form.from_model(@current_user)
+        render(page)
+      end
+
+      r.is method: :post do
+        page.form.from_params(form_data)
+        result = page.form.validate
+
+        if result.valid?
+          data = result.value
+          data.delete(:password) if data[:password].nil?
+          begin
+            @current_user.update(data)
+          rescue Sequel::UniqueConstraintViolation => err
+            page.form.email_unique
+          else
+            r.redirect("/me")
+          end
+        end
+
+        render(page)
+      end
+    end
+
     r.on "users" do
       r.is method: :get do
         render(Pages::Users.new)

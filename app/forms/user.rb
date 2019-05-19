@@ -10,9 +10,9 @@ module Forms
       end
     end
 
-    def with_password
-      field :password, Text.new do |f|
-        f.schema = V.trim | V.required
+    def with_password(required: false)
+      field :password, Forms::PasswordConfirm.new do |f|
+        f.mark_required if required
       end
     end
 
@@ -37,7 +37,7 @@ module Forms
       Tubby.new { |t|
         t << Input.new(field: name, name: "Name")
         t << Input.new(field: email, name: "Email", type: "email")
-        t << Input.new(field: password, name: "Password", type: "password") if password
+        t << password
       }
     end
   end

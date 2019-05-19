@@ -55,7 +55,7 @@ module Views
         }
 
         t << Section.new(@user.name) { |s|
-          s << Link.new("Settings", "/user")
+          s << Link.new("Your profile", "/me")
           s << Button.new("Sign out", "/logout")
         }
       }
