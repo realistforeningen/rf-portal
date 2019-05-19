@@ -32,4 +32,12 @@ class EaccountingClient
   def get_token(code)
     oauth2.auth_code.get_token(code, redirect_uri: @redirect_uri)
   end
+
+  def reuse_token(access_token)
+    OAuth2::AccessToken.from_hash(oauth2, access_token: access_token)
+  end
+
+  def refresh_token(refresh_token)
+    oauth2.get_token(grant_type: "refresh_token", refresh_token: refresh_token)
+  end
 end

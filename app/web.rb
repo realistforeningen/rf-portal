@@ -232,11 +232,7 @@ class Web < Roda
         environment: env,
         name: company_number
       )
-      integration.update(
-        access_token: token.token,
-        refresh_token: token.refresh_token,
-        token_expires_at: Time.at(token.expires_at),
-      )
+      integration.update_from_token(token)
       r.redirect("/eaccounting")
     end
 
