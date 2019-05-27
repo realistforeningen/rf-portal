@@ -59,16 +59,14 @@ RFP = Appy.new do
     JSON.parse((webpack_assets_path + 'manifest.json').read)
   end
 
-  has(:eaccounting_sandbox) do
+  has(:eaccounting_clients) do
     require 'eaccounting_client'
 
-    EaccountingClient.new(
-      site: "https://eaccountingapi-sandbox.test.vismaonline.com",
-      authorize_url: "https://identity-sandbox.test.vismaonline.com/connect/authorize",
-      token_url: "https://identity-sandbox.test.vismaonline.com/connect/token",
-      redirect_uri: "https://localhost:44300/callback",
-      **get(:eaccounting_sandbox),
-    )
+    clients = {}
+    get(:eaccounting).each do |name, options|
+      clients[name] = EaccountingClient.for_environment(name, **options)
+    end if has?(:eaccounting)
+    clients
   end
 
   cmd do |c|

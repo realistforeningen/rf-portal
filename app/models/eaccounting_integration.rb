@@ -3,10 +3,7 @@ require 'argon2'
 module Models
   class EaccountingIntegration < Sequel::Model
     def client
-      case environment
-      when "sandbox"
-        RFP.eaccounting_sandbox
-      else
+      @client ||= RFP.eaccount_clients.fetch(environment.to_sym) do
         raise "Unknown environment: #{environment}"
       end
     end

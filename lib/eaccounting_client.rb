@@ -1,6 +1,25 @@
 require 'oauth2'
 
 class EaccountingClient
+  DEFAULT_OPTIONS = {
+    sandbox: {
+      site: "https://eaccountingapi-sandbox.test.vismaonline.com",
+      authorize_url: "https://identity-sandbox.test.vismaonline.com/connect/authorize",
+      token_url: "https://identity-sandbox.test.vismaonline.com/connect/token",
+    },
+
+    production: {
+      site: "https://eaccountingapi.vismaonline.com",
+      authorize_url: "https://identity.vismaonline.com/connect/authorize",
+      token_url: "https://identity.vismaonline.com/connect/token",
+    },
+  }
+
+  def self.for_environment(name, **options)
+    default_options = DEFAULT_OPTIONS.fetch(name)
+    new(**default_options, **options)
+  end
+
   def initialize(site:, client_id:, client_secret:, authorize_url:, token_url:, redirect_uri:)
     @site = site
     @client_id = client_id

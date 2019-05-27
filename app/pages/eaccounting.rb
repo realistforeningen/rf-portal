@@ -8,7 +8,10 @@ module Pages
       Tubby.new { |t|
         t.div(class: "page") {
           t.h2("eAccounting")
-          t.a("Connect to sandbox", href: "/eaccounting/sandbox", class: "control-button")
+
+          RFP.eaccounting_clients.each_key do |name|
+            t.a("Connect to #{name}", href: "/eaccounting/authorize/#{name}", class: "control-button")
+          end
 
           t.table(class: "tbl") {
             t.thead {
