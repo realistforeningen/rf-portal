@@ -54,6 +54,10 @@ module Views
           s << Link.new("New user", "/users/new")
         }
 
+        t << Section.new("Accounting") { |s|
+          s << Link.new("eAccounting", "/eaccounting")
+        }
+
         t << Section.new(@user.name) { |s|
           s << Link.new("Your profile", "/me")
           s << Button.new("Sign out", "/logout")
