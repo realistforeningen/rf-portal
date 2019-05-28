@@ -3,7 +3,7 @@ require 'argon2'
 module Models
   class EaccountingIntegration < Sequel::Model
     def client
-      @client ||= RFP.eaccount_clients.fetch(environment.to_sym) do
+      @client ||= RFP.eaccounting_clients.fetch(environment.to_sym) do
         raise "Unknown environment: #{environment}"
       end
     end
