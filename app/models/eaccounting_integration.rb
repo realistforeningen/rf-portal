@@ -8,6 +8,10 @@ module Models
       end
     end
 
+    def syncer_for(year)
+      ::Eaccounting::Syncer.new(self, year)
+    end
+
     def token
       if token_expires_at - Time.now < 60*3
         # Make sure we have a valid token for three minutes
