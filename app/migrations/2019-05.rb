@@ -46,3 +46,30 @@ migrate "3-eaccounting" do |db|
     Time :created_at, default: Sequel.function(:now)
   end
 end
+
+migrate "4-journal" do |db|
+  db.create_table(:vouchers) do
+    Text :id, null: false, primary_key: true
+
+    Integer :year, null: false
+    foreign_key :eaccounting_integration_id, :eaccounting_integrations, null: false
+
+    Text :number, null: false
+    Date :date, null: false
+    Text :comment
+
+    unique [:eaccounting_integration_id, :year, :number]
+  end
+
+  db.create_table(:transactions) do
+    Text :id, null: false, primary_key: true
+    foreign_key :voucher_id, :vouchers, type: :text, null: false, on_delete: :cascade
+    Integer :position, null: false
+
+    Integer :account, null: false
+    Integer :amount, null: false
+    Text :comment
+
+    unique [:voucher_id, :position]
+  end
+end
