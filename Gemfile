@@ -10,6 +10,9 @@ gem 'zeitwerk'
 gem 'sequel', '~> 5.20.0'
 gem 'pg'
 
+# Queue system
+gem 'que', '1.0.0.beta3'
+
 # Web
 gem 'ippon', github: 'judofyr/ippon'
 gem 'tubby' , '~> 1.0'

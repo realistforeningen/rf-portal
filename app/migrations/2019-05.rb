@@ -73,3 +73,9 @@ migrate "4-journal" do |db|
     unique [:voucher_id, :position]
   end
 end
+
+migrate "5-queue-system" do |db|
+  require 'que'
+  Que.connection = db
+  Que.migrate!(version: 4)
+end
