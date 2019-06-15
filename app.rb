@@ -109,6 +109,36 @@ RFP = Appy.new do
       puts "Successfully created user (id=#{user.id})"
     end
   end
+
+  cmd do |c|
+    c.name "sync-eaccounting"
+    
+    c.option :e, :env, "Environment", argument: :required, default: "production"
+    c.option :n, :name, "Name", argument: :required
+    c.option :y, :year, "Year", argument: :required, transform: method(:Integer)
+
+    c.run do |opts, args|
+      integrations = Models::EaccountingIntegration.where(environment: opts[:env])
+      if opts[:name]
+        integrations = integrations.where(name: opts[:name])
+      end
+      data = integrations.all
+
+      if data.size != 1
+        raise "Couldn't find a single integration"
+      end
+
+      if !opts[:year]
+        raise "Year is required"
+      end
+
+      int = data[0]
+
+      puts "Syncing #{int.name} (#{int.environment})"
+      syncer = Eaccounting::Syncer.new(int, opts[:year])
+      syncer.apply
+    end
+  end
 end
 
 RFP.loader.setup
