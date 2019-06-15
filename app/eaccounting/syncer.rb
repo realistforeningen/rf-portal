@@ -73,7 +73,7 @@ module Eaccounting
             voucher["Id"],
             idx,
             row["AccountNumber"],
-            ((row["DebitAmount"] - row["CreditAmount"]) / 100).to_i,
+            ((row["DebitAmount"] - row["CreditAmount"]) * 100).round,
             row["TransactionText"],
           ]
         end
