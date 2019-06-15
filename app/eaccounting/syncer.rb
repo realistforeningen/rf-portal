@@ -25,35 +25,39 @@ module Eaccounting
 
     private
 
-    def get_all(endpoint, filter:, &blk)
-      last_key = nil
+    def get_all(endpoint, filter:, order_by:, next_page_filter:, &blk)
+      last_row = nil
 
       while true
-        query = {"$pagesize" => 1000}
+        query = {"$pagesize" => 1000, "$orderby" => order_by}
         filters = [filter]
-        filters << "Id gt #{last_key.inspect}" if last_key
+        if last_row
+          filters << next_page_filter.call(last_row)
+        end
         if filters.any?
           query["$filter"] = filters.join(" and ")
         end
-        response = @integration.token.get(endpoint, query).parsed
+        response = @integration.token.get(endpoint, params: query).parsed
         response["Data"].each(&blk)
 
         if response["Meta"]["TotalNumberOfPages"] <= 1
           break
         end
 
-        last_key = response["Data"].fetch("Id")
+        last_row = response["Data"].last
       end
     end
 
     VOUCHER_KEYS = %i|id year eaccounting_integration_id number date comment|
     TRANSACTION_KEYS = %i|id voucher_id position account amount comment|
 
-    def fetch_data
-      @vouchers = []
-      @transactions = []
-
-      get_all("v2/Vouchers", filter: "year(VoucherDate) eq '#{@year}'") do |voucher|
+    def fetch_vouches_series(series)
+      get_all(
+        "v2/Vouchers",
+        filter: "year(VoucherDate) eq #{@year} and NumberSeries eq '#{series}'",
+        order_by: "Number",
+        next_page_filter: ->(row) { "Number gt #{row['NumberAndNumberSeries'][/\d+/]}" },
+      ) do |voucher|
         @vouchers << [
           voucher["Id"],
           @year,
@@ -73,6 +77,15 @@ module Eaccounting
             row["TransactionText"],
           ]
         end
+      end
+    end
+
+    def fetch_data
+      @vouchers = []
+      @transactions = []
+
+      %w[D B K F A G H E J].each do |series|
+        fetch_vouches_series(series)
       end
 
       puts "Fetched #{@vouchers.size} vouchers"
