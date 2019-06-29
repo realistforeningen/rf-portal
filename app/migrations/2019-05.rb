@@ -79,3 +79,37 @@ migrate "5-queue-system" do |db|
   Que.connection = db
   Que.migrate!(version: 4)
 end
+
+migrate "6-ledger" do |db|
+  db.create_table(:ledgers) do
+    primary_key :id
+
+    Integer :year, null: false
+    foreign_key :eaccounting_integration_id, :eaccounting_integrations, null: false
+
+    Boolean :is_default, default: false
+
+    unique [:year, :eaccounting_integration_id]
+  end
+
+  existing = db[:vouchers].distinct.select(:year, :eaccounting_integration_id).all
+  mapping = {}
+
+  existing.each do |key|
+    mapping[key] = db[:ledgers].insert(key)
+  end
+
+  db.alter_table(:vouchers) do
+    add_foreign_key :ledger_id, :ledgers
+  end
+
+  mapping.each do |key, id|
+    db[:vouchers].where(key).update(ledger_id: id)
+  end
+
+  db.alter_table(:vouchers) do
+    drop_column :year
+    drop_column :eaccounting_integration_id
+    set_column_not_null :ledger_id
+  end
+end

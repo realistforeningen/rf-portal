@@ -118,24 +118,25 @@ RFP = Appy.new do
     c.option :y, :year, "Year", argument: :required, transform: method(:Integer)
 
     c.run do |opts, args|
-      integrations = Models::EaccountingIntegration.where(environment: opts[:env])
+      ledgers = Models::Ledger
+        .association_join(:eaccounting_integration)
+        .where { eaccounting_integration[:environment] =~ opts[:env] }
+
       if opts[:name]
-        integrations = integrations.where(name: opts[:name])
+        ledgers = ledgers.where { eaccounting_integration[:name] =~ opts[:name] }
       end
-      data = integrations.all
+
+      data = ledgers.all
 
       if data.size != 1
         raise "Couldn't find a single integration"
       end
 
-      if !opts[:year]
-        raise "Year is required"
-      end
+      ledger = data[0]
+      int = ledger.eaccounting_integration
 
-      int = data[0]
-
-      puts "Syncing #{int.name} (#{int.environment})"
-      syncer = Eaccounting::Syncer.new(int, opts[:year])
+      puts "Syncing #{int.name} (#{int.environment}) for year #{ledger.year}"
+      syncer = Eaccounting::Syncer.new(ledger)
       syncer.apply
     end
   end

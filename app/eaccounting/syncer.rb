@@ -1,8 +1,17 @@
 module Eaccounting
   class Syncer
-    def initialize(integration, year)
-      @integration = integration
-      @year = year
+    attr_reader :ledger
+
+    def initialize(ledger)
+      @ledger = ledger
+    end
+
+    def year
+      ledger.year
+    end
+
+    def integration
+      ledger.eaccounting_integration
     end
 
     def apply
@@ -11,10 +20,7 @@ module Eaccounting
 
       RFP.db.transaction do
         # Delete all existing data
-        Models::Voucher.where(
-          eaccounting_integration: @integration,
-          year: @year
-        ).delete
+        Models::Voucher.where(ledger_id: ledger.id).delete
 
         Models::Voucher.import(VOUCHER_KEYS, @vouchers)
         Models::Transaction.import(TRANSACTION_KEYS, @transactions)
@@ -37,7 +43,7 @@ module Eaccounting
         if filters.any?
           query["$filter"] = filters.join(" and ")
         end
-        response = @integration.token.get(endpoint, params: query).parsed
+        response = integration.token.get(endpoint, params: query).parsed
         response["Data"].each(&blk)
 
         if response["Meta"]["TotalNumberOfPages"] <= 1
@@ -48,20 +54,19 @@ module Eaccounting
       end
     end
 
-    VOUCHER_KEYS = %i|id year eaccounting_integration_id number date comment|
+    VOUCHER_KEYS = %i|id ledger_id number date comment|
     TRANSACTION_KEYS = %i|id voucher_id position account amount comment|
 
     def fetch_vouches_series(series)
       get_all(
         "v2/Vouchers",
-        filter: "year(VoucherDate) eq #{@year} and NumberSeries eq '#{series}'",
+        filter: "year(VoucherDate) eq #{year} and NumberSeries eq '#{series}'",
         order_by: "Number",
         next_page_filter: ->(row) { "Number gt #{row['NumberAndNumberSeries'][/\d+/]}" },
       ) do |voucher|
         @vouchers << [
           voucher["Id"],
-          @year,
-          @integration.id,
+          ledger.id,
           voucher["NumberAndNumberSeries"],
           voucher["VoucherDate"],
           voucher["VoucherText"],

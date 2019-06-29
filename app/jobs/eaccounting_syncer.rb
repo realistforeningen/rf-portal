@@ -2,10 +2,10 @@ module Jobs
   class EaccountingSyncer < Que::Job
     self.maximum_retry_count = 0
 
-    def run(integration_id, year)
+    def run(ledger_id)
       RFP.db.transaction do
-        intgration = Models::EaccountingIntegration[integration_id]
-        syncer = Eaccounting::Syncer.new(intgration, year)
+        ledger = Models::Ledger[ledger_id]
+        syncer = Eaccounting::Syncer.new(ledger)
         syncer.apply
         destroy
       end
