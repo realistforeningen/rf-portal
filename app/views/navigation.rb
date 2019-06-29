@@ -55,6 +55,7 @@ module Views
         }
 
         t << Section.new("Accounting") { |s|
+          s << Link.new("Ledgers", "/ledgers")
           s << Link.new("eAccounting", "/eaccounting")
         }
 

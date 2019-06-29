@@ -223,6 +223,13 @@ class Web < Roda
       end
     end
 
+    r.on "ledgers" do
+      r.is method: :get do
+        page = Pages::Ledgers.new
+        render(page)
+      end
+    end
+
     r.is "callback", method: :get do
       environment = get_data.fetch("state")
       client = RFP.eaccounting_clients.fetch(environment.to_sym)
