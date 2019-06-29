@@ -14,6 +14,8 @@ module Pages
               t.tr {
                 t.th("Year")
                 t.th("Integration")
+                t.th("Synchronized at")
+                t.th
               }
             }
             t.tbody {
@@ -24,6 +26,18 @@ module Pages
                     t << ledger.eaccounting_integration.name
                     t << " - "
                     t << ledger.eaccounting_integration.environment
+                  }
+                  t.td {
+                    t << ledger.synchronized_at
+                  }
+                  t.td {
+                    if ledger.scheduled?
+                      t << "Synchronizing..."
+                    else
+                      t.csrf_form(method: 'post', action: "/ledgers/#{ledger.id}/sync") {
+                        t.button("Synchronize", class: "control-button")
+                      }
+                    end
                   }
                 }
               end

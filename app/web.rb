@@ -228,6 +228,18 @@ class Web < Roda
         page = Pages::Ledgers.new
         render(page)
       end
+
+      r.on Integer do |id|
+        ledger = Models::Ledger[id]
+
+        r.is "sync", method: :post do
+          RFP.db.transaction do
+            Jobs::EaccountingSyncer.enqueue(ledger.id)
+            ledger.update(scheduled_at: Time.now)
+          end
+          r.redirect("/ledgers")
+        end
+      end
     end
 
     r.is "callback", method: :get do

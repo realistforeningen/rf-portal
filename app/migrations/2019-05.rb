@@ -113,3 +113,10 @@ migrate "6-ledger" do |db|
     set_column_not_null :ledger_id
   end
 end
+
+migrate "7-sync-status" do |db|
+  db.alter_table(:ledgers) do
+    add_column :scheduled_at, DateTime
+    add_column :synchronized_at, DateTime
+  end
+end

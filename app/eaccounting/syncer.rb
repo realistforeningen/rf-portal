@@ -24,6 +24,7 @@ module Eaccounting
 
         Models::Voucher.import(VOUCHER_KEYS, @vouchers)
         Models::Transaction.import(TRANSACTION_KEYS, @transactions)
+        ledger.update(synchronized_at: Time.now)
       end
 
       nil
