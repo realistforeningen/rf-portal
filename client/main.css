@@ -47,11 +47,19 @@
 }
 
 .tbl th {
-  @apply p-3 border-b-2 border-gray-200 text-left;
+  @apply p-3 border-b border-gray-800 text-left;
 }
 
 .tbl td {
-  @apply border-b border-gray-200 p-2;
+  @apply border-b border-r border-l border-gray-500 p-2;
+}
+
+.tbl td:last-child {
+  @apply border-r-0
+}
+
+.tbl td:first-child {
+  @apply border-l-0
 }
 
 .page {
@@ -60,6 +68,18 @@
 
 .page h2 {
   @apply text-3xl font-bold border-b-4 border-indigo-500 mb-4 leading-tight;
+}
+
+.page-section-header {
+  @apply border-b-2 border-indigo-300;
+}
+
+.page-section-header .title {
+  @apply font-semibold leading-tight;
+}
+
+.page-section-body {
+  @apply p-4 mb-8 bg-gray-200;
 }
 
 .link {

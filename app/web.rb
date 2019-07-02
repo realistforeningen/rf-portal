@@ -232,6 +232,13 @@ class Web < Roda
       r.on Integer do |id|
         ledger = Models::Ledger[id]
 
+        r.is method: :get do
+          page = Pages::Transactions.new(ledger)
+          page.form.from_params(get_data)
+          page.load!
+          render(page)
+        end
+
         r.is "sync", method: :post do
           RFP.db.transaction do
             Jobs::EaccountingSyncer.enqueue(ledger.id)
