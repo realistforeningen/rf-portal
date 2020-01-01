@@ -4,19 +4,25 @@ module Pages
 
     def initialize(user)
       @user = user
-      @form = Forms::User.new
-      @form.key = Web::ROOT_KEY
+      @form = Forms::User[].new(Web::ROOT_KEY)
     end
 
     def to_tubby
       Tubby.new { |t|
-        t.div(class: "page") {
-          t.h2("Editing: #{@user.name}")
+        t << Views::UserContext.new(@user)
 
-          t.csrf_form(method: "post", class: "measure") {
-            t << @form
+        t.div(class: "box") {
+          t.h2("Edit", class: "box-header")
 
-            t.button("Save", class: "control-button")
+          t.csrf_form(method: "post") {
+            t.div(class: "box-body") {
+              t.div(@form, class: "measure")
+            }
+
+            t.div(class: "box-action") {
+              t.button("Save", class: "control-button")
+
+            }
           }
         }
       }

@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '~> 2.5.0'
+ruby '~> 2.6.0'
 
 # App structure
 gem 'appy', github: 'judofyr/appy'
@@ -17,7 +17,6 @@ gem 'que', '1.0.0.beta3'
 gem 'ippon', github: 'judofyr/ippon'
 gem 'tubby' , '~> 1.0'
 gem 'roda', '~> 3.19.0'
-gem 'fibby', github: 'judofyr/fibby'
 
 # Integration with eAccounting
 gem 'oauth2', '~> 1.4.1'

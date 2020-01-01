@@ -1,43 +1,38 @@
 module Forms
-  class User < DelegateForm
-    def initialize
-      field :name, Text.new do |f|
-        f.schema = V.trim | V.required
-      end
+  class User < Group
+    Parametric.make(self) do |options|
+      field(:name, Text)
+      field(:email, Text)
+      field(:password, PasswordConfirm) if options[:password]
 
-      field :email, Text.new do |f|
-        f.schema = V.trim | V.required
+      validate do
+        fields = {
+          name: field(:name) | trim | required,
+          email: field(:email) | trim | required | match(/^\S+@\S+$/, message: "This does not look like an email"),
+        }
+        fields[:password] = field(:password) if options[:password]
+        fields[:password] |= required if options[:password] == :required
+        form(fields)
       end
     end
 
-    def with_password(required: false)
-      field :password, Forms::PasswordConfirm.new do |f|
-        f.mark_required if required
-      end
-    end
 
-    UNIQUE_EMAIL = V.validate(message: "Email is already used") { false }
+    USED_EMAIL = Ippon::Validate::Builder.validate(message: "Email is already used") { false }
 
-    def email_unique
-      self[:email].result.errors << Ippon::Validate::StepError.new(UNIQUE_EMAIL)
+    def mark_used_email
+      USED_EMAIL.process(email.validate)
     end
 
     def from_model(user)
-      from_hash(
-        name: user.name,
-        email: user.email,
-      )
+      name.value = user.name
+      email.value = user.email
     end
 
     def to_tubby
-      name = self[:name]
-      email = self[:email]
-      password = self[:password] if children.has_key?(:password)
-
       Tubby.new { |t|
-        t << Input.new(field: name, name: "Name")
-        t << Input.new(field: email, name: "Email", type: "email")
-        t << password
+        t << Input.new(field: name, label: "Name")
+        t << Input.new(field: email, label: "Email", type: "email")
+        t << password if respond_to?(:password)
       }
     end
   end

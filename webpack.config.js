@@ -1,6 +1,6 @@
-const {resolve} = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ManifestPlugin = require("webpack-manifest-plugin");
+const SpriteLoaderPlugin = require('svg-sprite-loader/plugin');
 
 module.exports = (env, argv) => {
   let isProd = argv.mode === "production";
@@ -31,6 +31,14 @@ module.exports = (env, argv) => {
             },
           ],
         },
+        {
+          test: /\.svg$/,
+          loader: 'svg-sprite-loader',
+          options: {
+            extract: true,
+            spriteFilename: 'zondicons.svg',
+          },
+        },
       ],
     },
 
@@ -38,6 +46,7 @@ module.exports = (env, argv) => {
       new MiniCssExtractPlugin({
         filename: `[name]${extra}.css`,
       }),
+      new SpriteLoaderPlugin(),
       new ManifestPlugin(),
     ],
   };

@@ -1,9 +1,6 @@
-require 'fibby'
-require 'ippon/validate'
+require 'ippon/form'
 
 module Forms
-  Text = Fibby::Text
-  DelegateForm = Fibby::DelegateForm
+  Group = Ippon::Form::Group
   StepError = Ippon::Validate::StepError
-  V = Ippon::Validate::Builder
 end

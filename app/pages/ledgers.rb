@@ -1,27 +1,28 @@
 module Pages
   class Ledgers
     def ledgers
-      @ledgers ||= Models::Ledger.order(:year).all
+      @ledgers ||= Models::Ledger.order(Sequel.desc(:year)).all
     end
 
     def to_tubby
       Tubby.new { |t|
-        t.div(class: "page") {
-          t.h2("All ledgers")
+        t.div(class: "box") {
+          t.div("All ledgers", class: "box-header")
 
-          t.table(class: "tbl") {
+          t.table(class: "box-tbl") {
             t.thead {
               t.tr {
                 t.th("Year")
                 t.th("Integration")
-                t.th("Synchronized at")
-                t.th
+                t.th("Last synchronized at")
               }
             }
             t.tbody {
               ledgers.each do |ledger|
                 t.tr {
-                  t.td(ledger.year)
+                  t.td(class: "main") {
+                    t.a(ledger.year, href: "/ledgers/#{ledger.id}")
+                  }
                   t.td {
                     t << ledger.eaccounting_integration.name
                     t << " - "
@@ -29,15 +30,6 @@ module Pages
                   }
                   t.td {
                     t << ledger.synchronized_at
-                  }
-                  t.td {
-                    if ledger.scheduled?
-                      t << "Synchronizing..."
-                    else
-                      t.csrf_form(method: 'post', action: "/ledgers/#{ledger.id}/sync") {
-                        t.button("Synchronize", class: "control-button")
-                      }
-                    end
                   }
                 }
               end

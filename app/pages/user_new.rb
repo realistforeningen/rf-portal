@@ -3,20 +3,23 @@ module Pages
     attr_reader :form
 
     def initialize
-      @form = Forms::User.new
-      @form.with_password(required: true)
-      @form.key = Web::ROOT_KEY
+      @form = Forms::User[password: :required].new(Web::ROOT_KEY)
     end
+
 
     def to_tubby
       Tubby.new { |t|
-        t.div(class: "page") {
-          t.h2("New user")
+        t.div(class: "box") {
+          t.h2("New user", class: "box-header")
 
-          t.csrf_form(method: "post", class: "measure") {
-            t << @form
-
-            t.button("Create", class: "control-button")
+          t.csrf_form(method: "post") {
+            t.div(class: "box-body") {
+              t.div(@form, class: "measure")
+            }
+            
+            t.div(class: "box-action") {
+              t.button("Create", class: "control-button")
+            }
           }
         }
       }

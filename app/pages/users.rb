@@ -6,25 +6,25 @@ module Pages
 
     def to_tubby
       Tubby.new { |t|
-        t.div(class: "page") {
-          t.h2("All users")
-  
-          t.table(class: "tbl") {
+        t.div(class: "box") {
+          t.div(class: "box-header") {
+            t << "All users"
+          }
+
+          t.table(class: "box-tbl") {
             t.thead {
               t.tr {
                 t.th("Name")
                 t.th("Email")
-                t.th
               }
             }
             t.tbody {
               users.each do |user|
                 t.tr {
-                  t.td(user.name)
-                  t.td(user.email)
-                  t.td {
-                    t.a("Edit", href: "/users/#{user.id}/edit", class: "link")
+                  t.td(class: "main") {
+                    t.a(user.name, href: "/users/#{user.id}/edit")
                   }
+                  t.td(user.email)
                 }
               end
             }

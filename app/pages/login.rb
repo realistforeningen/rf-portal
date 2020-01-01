@@ -6,10 +6,20 @@ module Pages
 
     def to_tubby
       Tubby.new { |t|
-        t.csrf_form(class: "measure", method: "post") {
-          t << @form
+        t.div(class: "box") {
+          t.div(class: "box-header") {
+            t << "Login"
+          }
 
-          t.button("Sign in", class: "control-button")
+          t.csrf_form(method: "post") {
+            t.div(class: "box-body") {
+              t.div(@form, class: "measure")
+            }
+
+            t.div(class: "box-action") {
+              t.button("Sign in", class: "control-button")
+            }
+          }
         }
       }
     end

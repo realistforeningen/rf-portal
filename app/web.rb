@@ -9,11 +9,6 @@ class Web < Roda
 
   plugin :sessions, secret: RFP.get(:secret)
 
-  def webpack_path(name)
-    full_name = RFP.webpack_manifest.fetch(name)
-    "/dist/#{full_name}"
-  end
-
   def render(content = nil)
     @layout.content = content if content
     target = String.new
@@ -95,12 +90,11 @@ class Web < Roda
 
     @layout = Views::Layout.new
     @layout.head_contents << Tubby.new { |t|
-      t.link(rel: "stylesheet", href: webpack_path("main.css"))
+      t.link(rel: "stylesheet", href: RFP.webpack_path("main.css"))
     }
 
     r.on "login" do
-      form = Forms::Login.new
-      form.key = ROOT_KEY
+      form = Forms::Login.new(ROOT_KEY)
       page = Pages::Login.new(form)
 
       r.is method: :get do
@@ -108,7 +102,7 @@ class Web < Roda
       end
 
       r.is method: :post do
-        form.from_params(form_data)
+        form.from_input(form_data)
         result = form.validate
         if result.valid?
           r.session["user_id"] = result.value[:user].id
@@ -126,7 +120,7 @@ class Web < Roda
 
     if user_id = r.session["user_id"]
       @current_user = Models::User[user_id]
-      @layout.header_contents << Views::Navigation.new(@current_user)
+      @layout.navigation = Views::Navigation.new(@current_user)
     end
 
     r.root do
@@ -134,7 +128,16 @@ class Web < Roda
         r.redirect("/login")
       end
 
-      render("Hello #{@current_user.name}!")
+      nav = @layout.navigation
+      @layout.navigation = nil
+
+      render(Tubby.new { |t|
+        t.div(class: "box") {
+          t.div(class: "box-body") {
+            t << nav
+          }
+        }
+      })
     end
 
     r.on "me" do
@@ -146,7 +149,7 @@ class Web < Roda
       end
 
       r.is method: :post do
-        page.form.from_params(form_data)
+        page.form.from_input(form_data)
         result = page.form.validate
 
         if result.valid?
@@ -155,7 +158,7 @@ class Web < Roda
           begin
             @current_user.update(data)
           rescue Sequel::UniqueConstraintViolation => err
-            page.form.email_unique
+            page.form.mark_used_email
           else
             r.redirect("/me")
           end
@@ -178,14 +181,14 @@ class Web < Roda
         end
 
         r.is method: :post do
-          page.form.from_params(form_data)
+          page.form.from_input(form_data)
           result = page.form.validate
 
           if result.valid?
             begin
               Models::User.create(result.value)
             rescue Sequel::UniqueConstraintViolation => err
-              page.form.email_unique
+              page.form.mark_used_email
             else
               r.redirect("/users")
             end
@@ -205,14 +208,14 @@ class Web < Roda
         end
 
         r.is method: "post" do
-          page.form.from_params(form_data)
+          page.form.from_input(form_data)
           result = page.form.validate
           
           if result.valid?
             begin
               user.update(result.value)
             rescue Sequel::UniqueConstraintViolation => err
-              page.form.email_unique
+              page.form.mark_used_email
             else
               r.redirect("/users")
             end
@@ -234,8 +237,13 @@ class Web < Roda
 
         r.is method: :get do
           page = Pages::Transactions.new(ledger)
-          page.form.from_params(get_data)
+          page.form.from_input(get_data)
           page.load!
+          render(page)
+        end
+
+        r.is "sync", method: :get do
+          page = Pages::LedgerSync.new(ledger)
           render(page)
         end
 
@@ -244,7 +252,7 @@ class Web < Roda
             Jobs::EaccountingSyncer.enqueue(ledger.id)
             ledger.update(scheduled_at: Time.now)
           end
-          r.redirect("/ledgers")
+          r.redirect("/ledgers/#{ledger.id}")
         end
       end
     end

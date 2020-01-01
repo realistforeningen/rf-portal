@@ -4,6 +4,10 @@
 
 @tailwind utilities;
 
+html, body {
+  @apply bg-gray-300;
+}
+
 .measure {
   max-width: 30em;
 }
@@ -17,6 +21,109 @@
 .measure-narrow {
   max-width: 20em;
 }
+
+/* Backdrop + menu */
+.backdrop {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0);
+  transition: background .25s ease-in-out;
+  pointer-events: none;
+}
+
+.layout-col {
+  @apply mx-auto px-2;
+  max-width: 1000px;
+}
+
+.layout-nav {
+  display: none;
+  position: absolute;
+  top: 5px;
+  left: -1em;
+  right: -1em;
+}
+
+.layout-nav-gap {
+  height: 43px;
+}
+
+body.nav-active .backdrop {
+  background: rgba(0,0,0,0.1);
+}
+
+body.nav-active .layout-nav {
+  display: block;
+}
+
+body.nav-active .nav-indicator {
+  @apply rounded bg-indigo-800 text-white;
+}
+
+.box {
+  @apply bg-white border rounded shadow mb-4;
+}
+
+.box-header {
+  @apply py-2 px-8 text-2xl border-b-2 border-indigo-700;
+}
+
+.box-body {
+  @apply px-8 py-4 overflow-hidden;
+}
+
+.box-action {
+  @apply px-8 py-4 bg-gray-200 border-t border-gray-300;
+}
+
+.box-action.small {
+  @apply py-3 text-sm;
+}
+
+.box-tbl {
+  @apply mb-8 w-full;
+}
+
+.box-tbl tr {
+  @apply border-b;
+}
+
+.box-tbl tbody tr:last-child {
+  @apply border-gray-400;
+}
+
+.box-tbl tr:hover {
+  @apply bg-gray-100;
+}
+
+.box-tbl td:first-child, .box-tbl th:first-child {
+  @apply pl-8;
+}
+
+.box-tbl td {
+  @apply text-sm px-2 py-1 text-gray-700;
+}
+
+.box-tbl td a {
+  display: block;
+}
+
+.box-tbl td.main {
+  @apply text-black font-semibold;
+}
+
+.box-tbl td.right, .box-tbl th.right {
+  @apply text-right;
+}
+
+.box-tbl th {
+  @apply text-left px-2 pt-2 pb-1 bg-gray-100 text-gray-700 font-semibold;
+}
+
+/* Forms */
 
 .control-input {
   @apply shadow border rounded w-full py-2 px-3 text-gray-800 leading-tight;
@@ -39,7 +146,14 @@
 }
 
 .control-button {
-  @apply py-1 px-4 bg-gray-200 border border-indigo-500 font-semibold rounded;
+  @apply bg-indigo-800 py-1 px-4 text-white font-semibold rounded;
+}
+
+/* Icon helper */
+.icon {
+  height: 1em;
+  width: 1em;
+  @apply fill-current inline-block;
 }
 
 .tbl {
@@ -60,26 +174,6 @@
 
 .tbl td:first-child {
   @apply border-l-0
-}
-
-.page {
-  max-width: 800px;
-}
-
-.page h2 {
-  @apply text-3xl font-bold border-b-4 border-indigo-500 mb-4 leading-tight;
-}
-
-.page-section-header {
-  @apply border-b-2 border-indigo-300;
-}
-
-.page-section-header .title {
-  @apply font-semibold leading-tight;
-}
-
-.page-section-body {
-  @apply p-4 mb-8 bg-gray-200;
 }
 
 .link {

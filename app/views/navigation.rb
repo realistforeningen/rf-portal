@@ -1,6 +1,6 @@
 module Views
   class Navigation
-    class Section
+    class OldSection
       def initialize(name)
         @name = name
         @items = []
@@ -25,10 +25,14 @@ module Views
       end
     end
 
+    TEXT_STYLE = "border-b border-blue-500 text-gray-800 hover:text-black hover:font-semibold" #"underline hover:no-underline text-blue-600"
+
     Link = Struct.new(:name, :url) do
       def to_tubby
         Tubby.new { |t|
-          t.a(name, href: url, class: "underline hover:no-underline")
+          t.div {
+            t.a(name, href: url, class: TEXT_STYLE)
+          }
         }
       end
     end
@@ -36,8 +40,32 @@ module Views
     Button = Struct.new(:name, :url) do
       def to_tubby
         Tubby.new { |t|
-          t.csrf_form(method: :post, action: url) {
-            t.button(name, class: "underline hover:no-underline")
+          t.csrf_form(method: :post, action: url, class: "block") {
+            t.button(name, class: TEXT_STYLE)
+          }
+        }
+      end
+    end
+
+    class Section
+      def initialize(title:, icon:, &blk)
+        @title = title
+        @icon = icon
+        @blk = blk
+      end
+
+      def to_tubby
+        Tubby.new { |t|
+          t.div(class: "flex-1 flex mr-16 mb-4") {
+            t.div(class: "text-xl mr-2 text-gray-700") {
+              t << Icon.new(@icon)
+            }
+
+            t.div {
+              t.h2(@title, class: "text-xl font-semibold")
+
+              @blk.call(t)
+            }
           }
         }
       end
@@ -49,19 +77,21 @@ module Views
 
     def to_tubby
       Tubby.new { |t|
-        t << Section.new("Users") { |s|
-          s << Link.new("All users", "/users")
-          s << Link.new("New user", "/users/new")
-        }
-
-        t << Section.new("Accounting") { |s|
-          s << Link.new("Ledgers", "/ledgers")
-          s << Link.new("eAccounting", "/eaccounting")
-        }
-
-        t << Section.new(@user.name) { |s|
-          s << Link.new("Your profile", "/me")
-          s << Button.new("Sign out", "/logout")
+        t.div(class: "flex flex-wrap my-4") {
+          t << Section.new(title: "Users", icon: "user-group") { |t|
+            t << Link.new("All users", "/users")
+            t << Link.new("New user", "/users/new")
+          }
+  
+          t << Section.new(title: "Accounting", icon: "box") { |s|
+            s << Link.new("Ledgers", "/ledgers")
+            s << Link.new("eAccounting", "/eaccounting")
+          }
+  
+          t << Section.new(title: @user.name, icon: "user") { |s|
+            s << Link.new("Your profile", "/me")
+            s << Button.new("Sign out", "/logout")
+          }
         }
       }
     end

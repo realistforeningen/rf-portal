@@ -1,6 +1,6 @@
 module Views
   class Layout
-    attr_accessor :title, :content
+    attr_accessor :title, :content, :navigation, :user
     attr_reader :head_contents
     attr_reader :header_contents
 
@@ -14,6 +14,8 @@ module Views
         t.doctype!
         t.html {
           t.head {
+            t.meta(name: "viewport", content: "width=device-width, initial-scale=1")
+
             t.title {
               if title
                 t << title << " - RF-portal"
@@ -24,17 +26,45 @@ module Views
 
             @head_contents.each { |c| t << c }
           }
-        }
 
-        t.body {
-          t.div(class: "py-2 px-4 flex items-baseline border-b bg-gray-200") {
-            t.a("RF-portal", href: "/", class: "text-xl font-semibold hover:underline")
+          t.body {
+            t.div(class: "backdrop")
 
-            @header_contents.each { |c| t << c }
-          }
+            t.script <<~JS
+              function Ra() { document.body.classList.add('nav-active') }
+              function Rd() { document.body.classList.remove('nav-active') }
+              function Rt() { document.body.classList.toggle('nav-active') }
+            JS
+  
+            t.div(class: "layout-col") {
+              t.div(class: "relative", onmouseleave: "Rd()") {
+                t.div(class: "pt-4 pb-2 flex z-20 relative text-gray-800") {
+                  t.a(href: "/", onmouseenter: @navigation && "Ra()", onclick: @navigation && "Rt();return false", class: "nav-indicator px-1") {
+                    t << "RF-portal"
 
-          t.div(class: "p-4") {
-            t << @content
+                    t.span(class: "pl-1") {
+                      t << Icon.new("cheveron-down")
+                    } if @navigation
+                  }
+                  t.div(class: "flex-1")
+                  t.div {
+                    # TODO: User information
+                  }
+                }
+  
+                t.div(class: "layout-nav z-10 bg-white shadow-2xl rounded overflow-hidden") {
+                  t.div(class: "layout-nav-gap")
+  
+                  t.div(class: "pb-8 pt-4 px-8 bg-gray-100 border-t") {
+                    t << @navigation
+                  }
+                } if @navigation
+              }
+            }
+  
+            t.div(class: "layout-col") {
+              t << @content
+            }
           }
         }
       }

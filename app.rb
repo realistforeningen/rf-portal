@@ -59,6 +59,11 @@ RFP = Appy.new do
     JSON.parse((webpack_assets_path + 'manifest.json').read)
   end
 
+  def webpack_path(name)
+    full_name = webpack_manifest.fetch(name)
+    "/dist/#{full_name}"
+  end
+
   has(:eaccounting_clients) do
     require 'eaccounting_client'
 

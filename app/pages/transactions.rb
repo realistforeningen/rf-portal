@@ -8,8 +8,7 @@ module Pages
 
     def initialize(ledger)
       @ledger = ledger
-      @form = Forms::TransactionFilter.new
-      @form.key = Web::ROOT_KEY
+      @form = Forms::TransactionFilter.new(Web::ROOT_KEY)
     end
 
     def query_params
@@ -18,8 +17,9 @@ module Pages
 
     def www_form
       result = []
-      @form.each_pair do |name, value|
+      @form.serialize do |name, value|
         next if name == "page"
+        next if value.nil?
         result << [name, value]
       end
       result
@@ -50,50 +50,33 @@ module Pages
 
     def to_tubby
       Tubby.new { |t|
-        t.div(class: "page") {
-          t.h2("Transactions")
+        t << Views::LedgerContext.new(@ledger)
+        
+        t.div(class: "box") {
+          t.div("Transactions", class: "box-header")
 
-          t.div(class: "page-section-header") {
-            t.h3("Filters", class: "title")
-          }
-
-          t.div(class: "page-section-body") {
+          t.div(class: "box-body") {
             t.form(method: "get", class: "measure") {
               t << @form
               t.button("Apply filter", class: "control-button")
             }
           }
 
-          t.div(class: "page-section-header") {
-            t.div(class: "flex") {
-              t.h3("Results", class: "title")
-              t.div(class: "flex-1")
-              if @paginator
-                t.div(class: "text-sm") {
-                  t << Views::Paginator.new(@paginator, query_params)
-                }
-              end
-            }
-          }
-
-          t.div(class: "page-section-body") {
-            if @filter_result.valid?
-              table(t)
-            else
-              t << "Nope!"
-            end
-          }
+          if @filter_result.valid?
+            table(t)
+          end
         }
       }
     end
 
     def table(t)
-      t.table(class: "tbl") {
+      t.table(class: "box-tbl") {
         t.thead {
           t.tr {
             t.th("Voucher")
-            t.th("Dato")
-            t.th("Account")
+            t.th("Date")
+            t.th("Account", class: "right")
+            t.th("Amount", class: "right")
             t.th("Comment")
           }
         }
@@ -101,17 +84,22 @@ module Pages
         t.tbody {
           @transactions.each do |trans|
             t.tr {
-              t.td {
-                t.a(trans.voucher.number, href: "/ledgers/#{@ledger.id}/vouchers/#{trans.voucher.id}", class: "link")
+              t.td(class: "main") {
+                t.a(trans.voucher.number, href: "/ledgers/#{@ledger.id}/vouchers/#{trans.voucher.id}")
               }
               t.td(trans.voucher.date, class: "whitespace-no-wrap")
-              t.td(trans.account)
+              t.td(trans.account, class: "right")
+              t.td(Views::Money.new(trans.amount), class: "right")
               t.td(trans.comment || trans.voucher.comment)
             }
           end
 
         }
       }
+
+      if @paginator
+        t << Views::Paginator.new(@paginator, query_params)
+      end
     end
   end
 end
