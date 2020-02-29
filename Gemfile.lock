@@ -43,7 +43,7 @@ GEM
     puma (3.12.1)
     que (1.0.0.beta3)
     rack (2.0.7)
-    rake (12.3.2)
+    rake (13.0.1)
     roda (3.19.0)
       rack
     sentry-raven (2.9.0)
