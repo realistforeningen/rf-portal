@@ -42,7 +42,7 @@ GEM
       method_source (~> 0.9.0)
     puma (3.12.1)
     que (1.0.0.beta3)
-    rack (2.0.7)
+    rack (2.2.3)
     rake (12.3.2)
     roda (3.19.0)
       rack
